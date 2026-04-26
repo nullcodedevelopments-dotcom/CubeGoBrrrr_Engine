@@ -1,0 +1,7 @@
+# Smoke tests
+math_smoketest.py
+raytrace_smoketest.py
+
+# Documentation
+**/README.md
+README.md
