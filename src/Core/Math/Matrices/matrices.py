@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import math
-from typing import Any, List, Optional, Tuple
+from typing import Any, List, Tuple
 
 Vector = Any
 
@@ -135,7 +135,7 @@ class Matrix3x3:
             + element_02 * (element_10 * element_21 - element_11 * element_20)
         )
 
-    def inverse(self) -> Optional[Matrix3x3]:
+    def inverse(self) -> Matrix3x3 | None:
         matrix_determinant: float = self.determinant()
         if abs(matrix_determinant) < 1e-10:
             return None
@@ -440,7 +440,7 @@ class Matrix4x4:
             cofactor_sum += sign * self.elements[col_index] * self._minor_determinant(0, col_index)
         return cofactor_sum
 
-    def inverse(self) -> Optional[Matrix4x4]:
+    def inverse(self) -> Matrix4x4 | None:
         matrix_determinant: float = self.determinant()
         if abs(matrix_determinant) < 1e-10:
             return None

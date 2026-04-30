@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import math
-from typing import Any, Optional, Tuple
+from typing import Any, Tuple
 
 Vector = Any
 
@@ -13,7 +13,7 @@ class RayCast:
     def __str__(self) -> str:
         return f"RayCast(origin={self.origin}, direction={self.direction})"
 
-    def triangle_intersection(self, vertex0: Vector, vertex1: Vector, vertex2: Vector) -> Optional[Vector]:
+    def triangle_intersection(self, vertex0: Vector, vertex1: Vector, vertex2: Vector) -> Vector | None:
         edge_one: Vector = vertex1 - vertex0
         edge_two: Vector = vertex2 - vertex0
         cross_direction_edge_two: Vector = self.direction.cross(edge_two)
@@ -42,7 +42,7 @@ class RayCast:
 
         return None
 
-    def sphere_intersection(self, center: Vector, radius: float) -> Optional[Vector]:
+    def sphere_intersection(self, center: Vector, radius: float) -> Vector | None:
         origin_to_center: Vector = self.origin - center
         coefficient_a: float = self.direction.dot(self.direction)
         coefficient_b: float = 2.0 * origin_to_center.dot(self.direction)
@@ -64,7 +64,7 @@ class RayCast:
 
         return None
 
-    def plane_intersection(self, plane_point: Vector, plane_normal: Vector) -> Optional[Vector]:
+    def plane_intersection(self, plane_point: Vector, plane_normal: Vector) -> Vector | None:
         denominator: float = plane_normal.dot(self.direction)
 
         if abs(denominator) < 1e-6:
@@ -77,7 +77,7 @@ class RayCast:
 
         return None
 
-    def box_intersection(self, box_minimum: Vector, box_maximum: Vector) -> Optional[Vector]:
+    def box_intersection(self, box_minimum: Vector, box_maximum: Vector) -> Vector | None:
         inverse_direction_x: float = (1.0 / self.direction.x) if self.direction.x != 0.0 else math.inf
         inverse_direction_y: float = (1.0 / self.direction.y) if self.direction.y != 0.0 else math.inf
         inverse_direction_z: float = (1.0 / self.direction.z) if self.direction.z != 0.0 else math.inf
@@ -104,14 +104,7 @@ class RayCast:
 
         return self.origin + self.direction * t_enter
 
-    def cylinder_intersection(
-        self,
-        base_center: Vector,
-        axis: Vector,
-        radius: float,
-        height: float,
-    ) -> Optional[Vector]:
-        
+    def cylinder_intersection(self, base_center: Vector, axis: Vector, radius: float, height: float) -> Vector | None:
         normalized_axis: Vector = axis.normalized()
         direction_projection: float = self.direction.dot(normalized_axis)
         perpendicular_direction: Vector = self.direction - normalized_axis * direction_projection
@@ -140,7 +133,7 @@ class RayCast:
 
         return None
 
-    def cone_intersection(self, apex: Vector, axis: Vector, angle: float) -> Optional[Vector]:
+    def cone_intersection(self, apex: Vector, axis: Vector, angle: float) -> Vector | None:
         normalized_axis: Vector = axis.normalized()
         cos_angle: float = math.cos(angle)
         sin_angle: float = math.sin(angle)
@@ -185,7 +178,7 @@ class RayCast:
 
         return None
 
-    def _barycentric_weights(self, vertex0: Vector, vertex1: Vector, vertex2: Vector, point: Vector) -> Optional[Tuple[float, float, float]]:
+    def _barycentric_weights(self, vertex0: Vector, vertex1: Vector, vertex2: Vector, point: Vector) -> Tuple[float, float, float] | None:
         edge_one: Vector = vertex1 - vertex0
         edge_two: Vector = vertex2 - vertex0
         point_vector: Vector = point - vertex0
@@ -211,16 +204,7 @@ class RayCast:
 
         return u_parameter, v_parameter, w_parameter
 
-    def barycentric_interpolation(
-        self,
-        vertex0: Vector,
-        vertex1: Vector,
-        vertex2: Vector,
-        uv0: Vector,
-        uv1: Vector,
-        uv2: Vector,
-        point: Vector,
-    ) -> Optional[Vector]:
+    def barycentric_interpolation(self, vertex0: Vector, vertex1: Vector, vertex2: Vector, uv0: Vector, uv1: Vector, uv2: Vector, point: Vector) -> Vector | None:
         barycentric_weights = self._barycentric_weights(vertex0, vertex1, vertex2, point)
 
         if barycentric_weights is None:
@@ -229,16 +213,7 @@ class RayCast:
         u_parameter, v_parameter, w_parameter = barycentric_weights
         return uv0 * u_parameter + uv1 * v_parameter + uv2 * w_parameter
 
-    def normal_interpolation(
-        self,
-        normal0: Vector,
-        normal1: Vector,
-        normal2: Vector,
-        vertex0: Vector,
-        vertex1: Vector,
-        vertex2: Vector,
-        point: Vector,
-    ) -> Optional[Vector]:
+    def normal_interpolation(self, normal0: Vector, normal1: Vector, normal2: Vector, vertex0: Vector, vertex1: Vector, vertex2: Vector, point: Vector) -> Vector | None:
         barycentric_weights = self._barycentric_weights(vertex0, vertex1, vertex2, point)
 
         if barycentric_weights is None:

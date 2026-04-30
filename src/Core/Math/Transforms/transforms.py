@@ -1,19 +1,14 @@
 from __future__ import annotations
 
 import math
-from typing import Optional, Tuple
+from typing import Tuple
 
 from src.Core.Math.Matrices.matrices import Matrix3x3, Matrix4x4
 from src.Core.Math.Quaternions.quaternions import Quaternion
 from src.Core.Math.Vectors.vectors import Vector3
 
 class Transform:
-    def __init__(
-        self,
-        position: Optional[Vector3] = None,
-        rotation: Optional[Quaternion] = None,
-        scale: Optional[Vector3] = None,
-    ) -> None:
+    def __init__(self, position: Vector3 | None = None, rotation: Quaternion | None = None, scale: Vector3 | None = None) -> None:
         
         self.position: Vector3 = position if position is not None else Vector3(0.0, 0.0, 0.0)
         self.rotation: Quaternion = rotation if rotation is not None else Quaternion.identity()
@@ -44,10 +39,19 @@ class Transform:
     def to_model_matrix(self) -> Matrix4x4:
         scale_matrix: Matrix4x4 = Matrix4x4.scale(self.scale.x, self.scale.y, self.scale.z)
         rotation_matrix: Matrix4x4 = self.rotation.to_matrix4x4()
+        # Needs to be verified to engine column row matrix convention
         translation_matrix: Matrix4x4 = Matrix4x4.translation(self.position.x, self.position.y, self.position.z)
+        if translation_matrix is None:
+            return Matrix4x4.identity()
+        elif translation_matrix and rotation_matrix is None:
+            return scale_matrix
+        elif translation_matrix and scale_matrix is None:
+            return rotation_matrix
+        elif rotation_matrix and scale_matrix is None:
+            return translation_matrix
         return translation_matrix * rotation_matrix * scale_matrix
 
-    def to_normal_matrix(self) -> Optional[Matrix3x3]:
+    def to_normal_matrix(self) -> Matrix3x3 | None:
         model_matrix: Matrix4x4 = self.to_model_matrix()
         upper_left: Matrix3x3 = Matrix3x3(
             model_matrix.get(0, 0), model_matrix.get(0, 1), model_matrix.get(0, 2),
@@ -55,7 +59,7 @@ class Transform:
             model_matrix.get(2, 0), model_matrix.get(2, 1), model_matrix.get(2, 2),
         )
 
-        inverse_upper_left: Optional[Matrix3x3] = upper_left.inverse()
+        inverse_upper_left: Matrix3x3 | None = upper_left.inverse()
         if inverse_upper_left is None:
             return None
         return inverse_upper_left.transpose()
@@ -82,9 +86,18 @@ class Transform:
         )
         extracted_scale: Vector3 = Vector3(scale_x, scale_y, scale_z)
 
-        inverse_scale_x: float = 1.0 / scale_x if scale_x > 1e-10 else 0.0
-        inverse_scale_y: float = 1.0 / scale_y if scale_y > 1e-10 else 0.0
-        inverse_scale_z: float = 1.0 / scale_z if scale_z > 1e-10 else 0.0
+        inverse_scale_x: float = 1.0 / scale_x
+        if scale_x < 1e-10:
+            inverse_scale_x = None
+            raise ValueError("Scale X is too close to zero, decomposition may be unstable and innacurate. Setting to None and consider fixing the input matrix.")
+        inverse_scale_y: float = 1.0 / scale_y
+        if scale_y < 1e-10:
+            inverse_scale_y = None
+            raise ValueError("Scale Y is too close to zero, decomposition may be unstable and innacurate. Setting to None and consider fixing the input matrix.")
+        inverse_scale_z: float = 1.0 / scale_z
+        if scale_z < 1e-10:
+            inverse_scale_z = None
+            raise ValueError("Scale Z is too close to zero, decomposition may be unstable and innacurate. Setting to None and consider fixing the input matrix.")
 
         rotation_matrix: Matrix3x3 = Matrix3x3(
             matrix.get(0, 0) * inverse_scale_x, matrix.get(0, 1) * inverse_scale_y, matrix.get(0, 2) * inverse_scale_z,
@@ -118,7 +131,7 @@ class TransformPipeline:
         return (clip_x, clip_y, clip_z, clip_w)
 
     @staticmethod
-    def world_to_ndc(world_point: Vector3, view_matrix: Matrix4x4, projection_matrix: Matrix4x4) -> Optional[Tuple[float, float, float]]:
+    def world_to_ndc(world_point: Vector3, view_matrix: Matrix4x4, projection_matrix: Matrix4x4) -> Tuple[float, float, float] | None:
         clip_x, clip_y, clip_z, clip_w = TransformPipeline.world_to_clip(world_point, view_matrix, projection_matrix)
         if clip_w <= 0.0:
             return None

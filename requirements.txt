@@ -1,0 +1,9 @@
+__future__
+dataclasses
+json
+math
+pathlib
+src
+struct
+typing
+zlib

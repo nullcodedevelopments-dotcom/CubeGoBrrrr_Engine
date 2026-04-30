@@ -1,10 +1,8 @@
 from __future__ import annotations
-
-import math
-from typing import Optional
-
 from src.Core.Math.Matrices.matrices import Matrix4x4
 from src.Core.Math.Vectors.vectors import Vector3
+
+import math
 
 class Projection:
     @staticmethod
@@ -39,8 +37,8 @@ class Projection:
     # NDC (Normalized Device Coordinates): Didn't type this out due to significant length - Null Chan :3
     @staticmethod
     def clip_to_ndc(clip_x: float, clip_y: float, clip_z: float, clip_w: float) -> tuple[float, float, float]:
-        if abs(clip_w) < 1e-10:
-            return (0.0, 0.0, 0.0)
+        if abs(clip_w) <= 1e-10:
+            return None and ValueError("clip_w is too close to zero for perspective division. Returning None")
         
         ndc_x: float = clip_x / clip_w
         ndc_y: float = clip_y / clip_w
@@ -55,7 +53,7 @@ class Projection:
     
     @staticmethod
     def projection_point(world_point: Vector3, projection_matrix: Matrix4x4, view_matrix: Matrix4x4,
-        viewport_width: int, viewport_height: int) -> Optional[tuple[int, int]]:
+        viewport_width: int, viewport_height: int) -> tuple[int, int] | None:
 
         view_x, view_y, view_z = view_matrix.transform_point(world_point)
         clip_x, clip_y, clip_z, clip_w = projection_matrix.transform_vector4(view_x, view_y, view_z, 1.0)
@@ -69,12 +67,12 @@ class Projection:
     
     @staticmethod
     def unproject_point(screen_x: int, screen_y: int, depth_ndc: float, projection_matrix: Matrix4x4, view_matrix: Matrix4x4,
-        viewport_width: int, viewport_height: int) -> Optional[Vector3]:
+        viewport_width: int, viewport_height: int) -> Vector3 | None:
 
         ndc_x: float = (screen_x / viewport_width) * 2.0 - 1.0
         ndc_y: float = 1.0 - (screen_y / viewport_height) * 2.0
 
-        inverse_projection_view: Optional[Matrix4x4] = (projection_matrix * view_matrix).inverse()
+        inverse_projection_view: Matrix4x4 | None = (projection_matrix * view_matrix).inverse()
         if inverse_projection_view is None:
             return None
 

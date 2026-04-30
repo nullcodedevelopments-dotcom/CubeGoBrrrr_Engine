@@ -1,0 +1,99 @@
+{
+    "logging_enabled": false,
+    "logging_level": "INFO",
+    "logging_types": {
+        "calculations_enabled": true,
+        "calculation_types": {
+            "raycast": {
+                "enabled": true,
+                "event_type": "Raycast",
+                "data": {
+                    "ray_origin": null,
+                    "ray_direction": null,
+                    "intersection_coefficients": null,
+                    "intersection_discriminants": null,
+                    "intersection_barycentric_weights": null,
+                    "intersection_parameters": null,
+                    "intersection_results": null,
+                    "intersection_misses": {
+                        "misses": [],
+                        "miss_count": 0,
+                        "miss_reasons": []
+                    }
+                }
+            },
+            "vector_operations": {
+                "enabled": true,
+                "event_type": "Vector_Operations",
+                "data": {
+                    "operation_type": null,
+                    "input_vectors": {
+                        "vector2": null,
+                        "vector3": null,
+                        "vector4": null
+                    },
+                    "output_vector": null,
+                    "addition_operation_info": null,
+                    "subtraction_operation_info": null,
+                    "dot_product": null,
+                    "cross_product": null,
+                    "normalization": {
+                        "input_length": null,
+                        "output_vector": null,
+                        "was_normalized": null
+                    }
+                }
+            },
+            "matrix_operations": {
+                "enabled": true,
+                "event_type": "Matrix_Operations",
+                "data": {
+                    "operation_type": null,
+                    "input_matrices": null,
+                    "output_matrix": null,
+                    "determinant": null,
+                    "inverse_success": null,
+                    "inverse_matrix": null,
+                    "transpose_matrix": null
+                }
+            },  
+            "quaternion_operations": {
+                "enabled": true,
+                "event_type": "Quaternion_Operations",
+                "data": {
+                    "operation_type": null,
+                    "input_values": null,
+                    "output_quaternion": null,
+                    "normalized": null,
+                    "inverse_success": null,
+                    "conversion_source": null,
+                    "conversion_target": null
+                }
+            },
+            "projection": {
+                "enabled": true,
+                "event_type": "Projection",
+                "data": {
+                    "projection_type": null,
+                    "parameters": null,
+                    "projection_matrix": null,
+                    "ndc_coordinates": null,
+                    "screen_coordinates": null,
+                    "unprojected_point": null
+                }
+            },
+            "interpolation": {
+                "enabled": true,
+                "event_type": "Interpolation",
+                "data": {
+                    "interpolation_type": null,
+                    "start_value": null,
+                    "end_value": null,
+                    "time": null,
+                    "output_value": null,
+                    "clamped_time": null
+                }
+            }
+        }
+    }
+}

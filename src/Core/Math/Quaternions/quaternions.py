@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Any, Optional, Tuple
+from typing import Any, Tuple
 from src.Core.Math.Matrices.matrices import Matrix3x3, Matrix4x4
 
 import math
@@ -158,7 +158,7 @@ class Quaternion:
     def conjugate(self) -> Quaternion:
         return Quaternion(self.w, -self.x, -self.y, -self.z)
 
-    def inverse(self) -> Optional[Quaternion]:
+    def inverse(self) -> Quaternion | None:
         squared_length: float = self.length_squared()
         if squared_length < 1e-10:
             return None
