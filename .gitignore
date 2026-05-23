@@ -17,7 +17,7 @@ logs/
 out/
 
 # Private Validation modules and caches -> Replaced .tmp for an official validation package
-validation/
+# validation/
 .validation_logs/
 .validation_scripts/
 
