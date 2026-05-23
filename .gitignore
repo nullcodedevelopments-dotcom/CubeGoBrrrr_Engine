@@ -3,6 +3,9 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# Sixth AI Assistant Cache
+.sixth/
+
 # Virtual environment
 .venv/
 
@@ -13,11 +16,10 @@ __pycache__/
 logs/
 out/
 
-# Doesn't need to be pushed, personal checks util
-.tmp
-
-# Private workspace caches
-data/file_previewer_cache/
+# Private Validation modules and caches -> Replaced .tmp for an official validation package
+validation/
+.validation_logs/
+.validation_scripts/
 
 # Distribution / packaging
 build/
